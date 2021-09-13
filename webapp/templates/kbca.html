@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Advanced</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+    crossorigin="anonymous">
+</head>
+
+<body class="bg-dark text-white ">
+  <header class="bg-secondary text-center p-3 mb-5">
+    <h1>KeyboardCrusher</h1>
+    <a href="http://127.0.0.1:5000/">Home</a>
+    <style>
+        a {
+            font-family: monospace;
+            color: black;
+            font-size: 48px;
+        }
+    </style>
+  </header>
+  <div class="container text-center">
+
+    
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <p class="lead">Type The Given Word Within
+          <span class="text-success" id="seconds">5</span> Seconds:</p>
+        <h2 class="display-2 mb-5" id="current-word">hello</h2>
+        <input type="text" class="form-control form-control-lg" placeholder="Start typing..." id="word-input" autofocus>
+        <h4 class="mt-3" id="message"></h4>
+
+        >
+        <div class="row mt-5">
+          <div class="col-md-6">
+            <h3>Time Left:
+              <span id="time">0</span>
+            </h3>
+          </div>
+          <div class="col-md-6">
+            <h3>Score:
+              <span id="score">0</span>
+            </h3>
+          </div>
+          <br><br>
+          <div class="col">
+            <h3>High Score:
+              <span id="highscore">0</span>
+            </h3>
+          </div>
+        </div>
+
+        
+        <div class="row mt-5">
+          <div class="col-md-12">
+            <div class="card card-body bg-secondary text-white">
+              <h5>Instructions</h5>
+              <p>Type each word in the given amount of seconds to score. To play again, just type the current word. Your score
+                will reset</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>window.addEventListener('load', init);
+
+    
+    
+    
+    const levels = {
+      beginner: 5,
+      intermediate: 3,
+      advanced: 1
+    };
+    
+    
+    const currentLevel = levels.advanced;
+    
+    let time = currentLevel;
+    let score = 0;
+    let isPlaying;
+    
+    
+    const wordInput = document.querySelector('#word-input');
+    const currentWord = document.querySelector('#current-word');
+    const scoreDisplay = document.querySelector('#score');
+    const timeDisplay = document.querySelector('#time');
+    const message = document.querySelector('#message');
+    const seconds = document.querySelector('#seconds');
+    const highscoreDisplay = document.querySelector('#highscore');
+    
+    const words = [
+      'incredible',
+      'generously',
+      'squirmy',
+      'insanely',
+      'steakhouse',
+      'the',
+      'of',
+      'night',
+      'darkness',
+      'try',
+      'might',
+      'evil',
+      'envy',
+      'love',
+      'life',
+      'tree',
+      'marker',
+      'eraser',
+      'drawing',
+      'friendly',
+      'why',
+      'how',
+      'live',
+      'run',
+      'clocks',
+      'move',
+      'zombie',
+      'existence',
+      'tent',
+      'dove',
+      'general',
+      'last',
+      'fish',
+      'whale',
+      'hat',
+      'river',
+      'lucky',
+      'statue',
+      'generate',
+      'stubborn',
+      'cocktail',
+      'runaway',
+      'joke',
+      'developer',
+      'establishment',
+      'hero',
+      'javascript',
+      'nutrition',
+      'revolver',
+      'echo',
+      'siblings',
+      'investigate',
+      'horrendous',
+      'symptom',
+      'laughter',
+      'magic',
+      'master',
+      'space',
+      'definition',
+      'tall',
+      'sun',
+      'sunflower',
+      'muscle',
+      'milk',
+      'travel',
+      'wickedness',
+      'fast',
+      'dutch',
+      'intense',
+      'focus',
+      'quit',
+      'continue',
+      'resume',
+      'enter',
+      'exit',
+      'quite',
+      'wealthy',
+      'rich',
+      'misfortune',
+      'example',
+      'english',
+      'grammar',
+      'holocaust',
+      'crime',
+      'history',
+      'intelligence',
+      'science'
+    ];
+    
+    
+    function init() {
+      
+      seconds.innerHTML = currentLevel;
+      
+      showWord(words);
+      
+      wordInput.addEventListener('input', startMatch);
+
+      setInterval(countdown, 1000);
+
+      setInterval(checkStatus, 50);
+    }
+    
+    function startMatch() {
+      if (matchWords()) {
+        isPlaying = true;
+        time = currentLevel + 1;
+        showWord(words);
+        wordInput.value = '';
+        score++;
+      }
+      
+      if (typeof sessionStorage['highscore'] === 'undefined' || score > sessionStorage['highscore']) {
+        sessionStorage['highscore'] = score;
+      } else {
+        sessionStorage['highscore'] = sessionStorage['highscore'];
+      }
+    
+      if (sessionStorage['highscore'] >= 0) {
+      highscoreDisplay.innerHTML = sessionStorage['highscore'];
+      }
+    
+      if (score === -1) {
+        scoreDisplay.innerHTML = 0;
+      } else {
+        scoreDisplay.innerHTML = score;
+      }
+    }
+    
+    function matchWords() {
+      if (wordInput.value === currentWord.innerHTML) {
+        message.innerHTML = 'Correct!!!';
+        return true;
+      } else {
+        message.innerHTML = '';
+        return false;
+      }
+    }
+    
+    function showWord(words) {
+      
+      const randIndex = Math.floor(Math.random() * words.length);
+      
+      currentWord.innerHTML = words[randIndex];
+    }
+    
+    
+    function countdown() {
+      
+      if (time > 0) {
+        
+        time--;
+      } else if (time === 0) {
+      
+        isPlaying = false;
+      }
+    
+      timeDisplay.innerHTML = time;
+    }
+    
+
+    function checkStatus() {
+      if (!isPlaying && time === 0) {
+        message.innerHTML = 'Game Over!';
+        score = -1;
+      }
+    }</script>
+</body>
+
+</html>
